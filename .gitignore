@@ -1,0 +1,54 @@
+# ----------------------------------------------------------------------
+# 1. Entornos virtuales
+# ----------------------------------------------------------------------
+venv/
+.venv/
+env/
+
+# ----------------------------------------------------------------------
+# 2. Variables de entorno y credenciales (Crítico)
+# ----------------------------------------------------------------------
+.env
+.env.*
+*.pem
+secrets.*
+
+# ----------------------------------------------------------------------
+# 3. Caché y archivos compilados de Python
+# ----------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# ----------------------------------------------------------------------
+# 4. Archivos de datos, logs y bases de datos locales
+# ----------------------------------------------------------------------
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.csv
+*.parquet
+*.json
+
+# Si necesitas rastrear un JSON específico (como un config.json), 
+# puedes forzar su inclusión añadiendo la siguiente línea:
+# !config.json
+
+# ----------------------------------------------------------------------
+# 5. Archivos del sistema operativo (macOS)
+# ----------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ----------------------------------------------------------------------
+# 6. Configuraciones locales de editores e IDEs (VS Code, PyCharm, etc.)
+# ----------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
