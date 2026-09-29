@@ -5,7 +5,7 @@ import plotly.express as px
 from database import get_database
 from data_processing import get_general_metrics, get_source_distribution, get_careers_distribution, generate_analytical_insights
 
-st.set_page_config(page_title="Observatorio Laboral EPN", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Ofertas Laborales", layout="wide", initial_sidebar_state="collapsed")
 
 # --- Estilos Globales para Gráficos Plotly ---
 PLOTLY_THEME = dict(
@@ -52,7 +52,7 @@ col2.metric(label="Ofertas Viables (Filtradas)", value=f"{t_gold:,}")
 col3.metric(
     label="Tasa de Utilidad Global", 
     value=f"{survival_rate:.1f}%",
-    delta="Retención efectiva",
+    delta="Retención después del NLP",
     delta_color="normal"
 )
 
