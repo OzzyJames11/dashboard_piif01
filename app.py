@@ -32,8 +32,10 @@ def load_dashboard_data():
 t_bronze, t_gold, survival_rate, df_sources, df_careers, insights = load_dashboard_data()
 
 # --- Interfaz Visual ---
-st.title("Observatorio Laboral EPN")
+st.title("Proyecto: Ofertas Laborales")
 st.markdown("### Análisis de Impacto y Relevancia del Mercado Laboral")
+st.markdown("Desarrollado por: Ozzy Loachamín")
+st.divider()
 
 # 1. KPIs
 col1, col2, col3 = st.columns(3)
@@ -77,6 +79,7 @@ with col_chart2:
                 "2. Después (Ofertas Útiles)": "#0284c7"
             }
         )
+        fig_sources.update_traces(textangle=0, textposition="outside")
         fig_sources.update_layout(**PLOTLY_THEME, legend_title_text='')
         st.plotly_chart(fig_sources, use_container_width=True, theme="streamlit")
 
@@ -97,7 +100,8 @@ with col_bar:
             text_auto=True
         )
         # Se elimina la escala continua y se fija un color sólido elegante para alto contraste
-        fig_careers.update_traces(marker_color="#0369a1")
+        fig_careers.update_traces(marker_color="#0369a1", textangle=0, textposition="outside")
+        # fig_careers.update_traces(marker_color="#0369a1")
         fig_careers.update_layout(**PLOTLY_THEME, yaxis={'categoryorder':'total ascending'}, height=650)
         st.plotly_chart(fig_careers, use_container_width=True, theme="streamlit")
 
