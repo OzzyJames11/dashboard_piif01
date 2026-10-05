@@ -104,3 +104,60 @@ def generate_analytical_insights(df_sources, total_bronze, total_gold):
                                 f"viabilidad del {tasa:.1f}%, sirviendo como una buena fuente complementaria.")
 
     return insights
+
+def get_geographic_distribution(db):
+    """Extrae las métricas geográficas desde la capa Silver limpiando datos nulos."""
+    
+    total_silver = db["silver_jobs"].count_documents({})
+    
+    # 2. Agregación por País (Exigimos que sea un string válido y filtramos basura)
+    pipeline_pais = [
+        {"$match": {"pais": {"$type": "string", "$nin": ["", " ", "None", "null", "No especificado"]}}},
+        {"$group": {"_id": "$pais", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    df_pais = pd.DataFrame(list(db["silver_jobs"].aggregate(pipeline_pais)))
+    
+    if not df_pais.empty:
+        df_pais.rename(columns={"_id": "País", "count": "Ofertas"}, inplace=True)
+        # Limpieza de espacios en blanco antes de clasificar
+        df_pais['Categoría'] = df_pais['País'].apply(lambda x: 'Ecuador' if str(x).strip().lower() == 'ecuador' else 'Internacional')
+        resumen_cat = df_pais.groupby('Categoría')['Ofertas'].sum().reset_index()
+    else:
+        df_pais = pd.DataFrame(columns=['País', 'Ofertas', 'Categoría'])
+        resumen_cat = pd.DataFrame(columns=['Categoría', 'Ofertas'])
+
+    # 3. Agregación por Provincia (Usamos regex sobre 'pais' en lugar de 'pais_iso')
+    pipeline_provincia = [
+        {"$match": {
+            "pais": {"$regex": "^ecuador$", "$options": "i"}, 
+            "provincia": {"$type": "string", "$nin": ["", " ", "None", "null", "No especificado"]}
+        }},
+        {"$group": {"_id": "$provincia", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    df_provincia = pd.DataFrame(list(db["silver_jobs"].aggregate(pipeline_provincia)))
+    
+    if not df_provincia.empty:
+        df_provincia.rename(columns={"_id": "Provincia", "count": "Ofertas"}, inplace=True)
+    else:
+        df_provincia = pd.DataFrame(columns=['Provincia', 'Ofertas'])
+
+    # 4. Agregación por Ciudad
+    pipeline_ciudad = [
+        {"$match": {
+            "pais": {"$regex": "^ecuador$", "$options": "i"}, 
+            "ciudad": {"$type": "string", "$nin": ["", " ", "None", "null", "No especificado"]}
+        }},
+        {"$group": {"_id": "$ciudad", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 15}
+    ]
+    df_ciudad = pd.DataFrame(list(db["silver_jobs"].aggregate(pipeline_ciudad)))
+    
+    if not df_ciudad.empty:
+        df_ciudad.rename(columns={"_id": "Ciudad", "count": "Ofertas"}, inplace=True)
+    else:
+        df_ciudad = pd.DataFrame(columns=['Ciudad', 'Ofertas'])
+
+    return total_silver, df_pais, resumen_cat, df_provincia, df_ciudad
